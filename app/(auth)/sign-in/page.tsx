@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import { signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -23,8 +24,13 @@ const AUTH_ERRORS: Record<string, string> = {
 
 export default function SignInPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') ?? '/dashboard';
+
+  useEffect(() => {
+    if (!authLoading && user) router.replace(next);
+  }, [user, authLoading, router, next]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

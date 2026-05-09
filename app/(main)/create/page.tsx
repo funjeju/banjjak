@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Sparkles, Loader2, Zap, Play, Square, CheckCircle2, XCircle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,6 +29,7 @@ type InputMode = 'prompt' | 'script';
 
 export default function CreatePage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const { balance } = useTokenBalance();
 
   const [inputMode, setInputMode] = useState<InputMode>('prompt');
@@ -50,6 +52,11 @@ export default function CreatePage() {
   const [jobId, setJobId] = useState<string | null>(null);
 
   const { status, videoUrl, error: statusError } = useJobStatus(jobId);
+
+  // 모든 hook 호출 후 auth 가드
+  useEffect(() => {
+    if (!authLoading && !user) router.replace('/sign-in?next=/create');
+  }, [user, authLoading, router]);
 
   const cost = calculateCost(timing);
   const hasBalance = balance >= cost.tokens;
@@ -113,6 +120,14 @@ export default function CreatePage() {
       setSubmitting(false);
     }
   };
+
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-[var(--color-banjak-primary)]" />
+      </div>
+    );
+  }
 
   if (jobId && status) {
     return (
