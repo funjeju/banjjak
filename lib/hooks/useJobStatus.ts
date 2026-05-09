@@ -21,7 +21,7 @@ export function useJobStatus(jobId: string | null) {
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const attemptsRef = useRef(0);
-  const pollRef = useRef<(id: string) => Promise<void>>();
+  const pollRef = useRef<((id: string) => Promise<void>) | undefined>(undefined);
 
   useEffect(() => {
     pollRef.current = async (id: string) => {
