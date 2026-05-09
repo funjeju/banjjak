@@ -27,11 +27,41 @@ export const CANVAS_STYLES: { id: CanvasStyle; label: string; emoji: string; des
   { id: 'marker', label: 'Sharpie', emoji: '✏️', description: '마커 스타일' },
 ];
 
-export const VOICES: { id: VoiceStyle; label: string; gender: 'female' | 'male'; number: number }[] = [
-  { id: 'solo-female-3', label: '여성 1', gender: 'female', number: 1 },
-  { id: 'solo-female-4', label: '여성 2', gender: 'female', number: 2 },
-  { id: 'solo-male-3', label: '남성 1', gender: 'male', number: 1 },
-  { id: 'solo-male-4', label: '남성 2', gender: 'male', number: 2 },
+export const VOICES: {
+  id: VoiceStyle;
+  label: string;
+  description: string;
+  gender: 'female' | 'male';
+  sampleVideoUrl: string | null;
+}[] = [
+  {
+    id: 'solo-female-3',
+    label: '여성 1',
+    description: '차분하고 친근한 톤',
+    gender: 'female',
+    sampleVideoUrl: null, // 골포 샘플 생성 후 URL 입력
+  },
+  {
+    id: 'solo-female-4',
+    label: '여성 2',
+    description: '밝고 에너제틱한 톤',
+    gender: 'female',
+    sampleVideoUrl: null,
+  },
+  {
+    id: 'solo-male-3',
+    label: '남성 1',
+    description: '안정감 있는 나레이션',
+    gender: 'male',
+    sampleVideoUrl: null,
+  },
+  {
+    id: 'solo-male-4',
+    label: '남성 2',
+    description: '전문적이고 또렷한 톤',
+    gender: 'male',
+    sampleVideoUrl: null,
+  },
 ];
 
 export const MUSIC_TRACKS: { id: BgMusic; label: string; emoji: string; description: string }[] = [

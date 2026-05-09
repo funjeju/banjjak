@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Sparkles, Loader2, Zap, Play, CheckCircle2, XCircle } from 'lucide-react';
+import { Sparkles, Loader2, Zap, Play, Square, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
@@ -42,6 +42,9 @@ export default function CreatePage() {
   const [language, setLanguage] = useState('ko');
   const [bgMusic, setBgMusic] = useState('engaging');
   const [playingMusic, setPlayingMusic] = useState<string | null>(null);
+
+  const [playingVoice, setPlayingVoice] = useState<string | null>(null);
+  const voiceVideoRef = useRef<HTMLVideoElement | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
@@ -331,20 +334,67 @@ export default function CreatePage() {
 
           <div className="mb-4">
             <p className="text-sm text-[var(--color-banjak-text-mid)] mb-2">음성</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {VOICES.map((v) => (
-                <button
+                <div
                   key={v.id}
-                  onClick={() => setVoiceStyle(v.id)}
                   className={cn(
-                    'py-3 rounded-2xl border-2 text-sm transition-all duration-150',
+                    'rounded-2xl border-2 overflow-hidden transition-all duration-150',
                     voiceStyle === v.id
-                      ? 'border-[var(--color-banjak-primary)] bg-[var(--color-banjak-primary-soft)]/20 font-medium text-[var(--color-banjak-text-dark)]'
-                      : 'border-[var(--color-banjak-border)] hover:bg-[var(--color-banjak-bg-gray)] text-[var(--color-banjak-text-mid)]'
+                      ? 'border-[var(--color-banjak-primary)] bg-[var(--color-banjak-primary-soft)]/20'
+                      : 'border-[var(--color-banjak-border)] bg-white'
                   )}
                 >
-                  {v.gender === 'female' ? '👩' : '👨'} {v.label}
-                </button>
+                  <button
+                    onClick={() => setVoiceStyle(v.id)}
+                    className="w-full p-3 text-left"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className={cn(
+                          'text-sm font-medium',
+                          voiceStyle === v.id ? 'text-[var(--color-banjak-text-dark)]' : 'text-[var(--color-banjak-text-mid)]'
+                        )}>
+                          {v.gender === 'female' ? '👩' : '👨'} {v.label}
+                        </p>
+                        <p className="text-xs text-[var(--color-banjak-text-light)] mt-0.5">{v.description}</p>
+                      </div>
+                      {v.sampleVideoUrl ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPlayingVoice(playingVoice === v.id ? null : v.id);
+                          }}
+                          className="w-7 h-7 rounded-full bg-[var(--color-banjak-primary-soft)] flex items-center justify-center flex-shrink-0"
+                        >
+                          {playingVoice === v.id
+                            ? <Square className="w-3 h-3 text-[var(--color-banjak-text-dark)]" />
+                            : <Play className="w-3 h-3 text-[var(--color-banjak-text-dark)]" />
+                          }
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-[var(--color-banjak-text-light)] bg-[var(--color-banjak-bg-gray)] rounded-full px-2 py-0.5 flex-shrink-0">
+                          준비 중
+                        </span>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* 샘플 비디오 플레이어 */}
+                  {v.sampleVideoUrl && playingVoice === v.id && (
+                    <div className="px-3 pb-3">
+                      <video
+                        ref={voiceVideoRef}
+                        src={v.sampleVideoUrl}
+                        autoPlay
+                        controls
+                        className="w-full rounded-xl"
+                        onEnded={() => setPlayingVoice(null)}
+                      />
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

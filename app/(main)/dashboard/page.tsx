@@ -5,7 +5,6 @@ import { Sparkles, Plus, Zap, Video } from 'lucide-react';
 import { adminAuth, adminDb } from '@/lib/firebase/admin';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { formatTokens, formatKrw } from '@/lib/tokens/calculator';
 
 export const dynamic = 'force-dynamic';

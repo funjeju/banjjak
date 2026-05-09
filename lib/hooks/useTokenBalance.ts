@@ -7,23 +7,24 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export function useTokenBalance() {
   const { user } = useAuth();
-  const [balance, setBalance] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
+  // loaded: 첫 스냅샷 수신 여부 — loading은 상태 대신 파생값으로 처리
+  const [data, setData] = useState<{ balance: number; loaded: boolean }>({
+    balance: 0,
+    loaded: false,
+  });
 
   useEffect(() => {
-    if (!user) {
-      setBalance(0);
-      setLoading(false);
-      return;
-    }
+    if (!user) return;
 
     const unsub = onSnapshot(doc(db, 'users', user.uid), (snap) => {
-      setBalance(snap.data()?.tokenBalance ?? 0);
-      setLoading(false);
+      setData({ balance: snap.data()?.tokenBalance ?? 0, loaded: true });
     });
 
     return unsub;
   }, [user]);
 
-  return { balance, loading };
+  return {
+    balance: data.balance,
+    loading: !!user && !data.loaded,
+  };
 }
