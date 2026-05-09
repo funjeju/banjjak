@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const PROTECTED_PATHS = ['/create', '/dashboard', '/billing'];
 const AUTH_PATHS = ['/sign-in', '/sign-up'];
 
-export async function proxy(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const session = req.cookies.get('__session')?.value;
   const { pathname } = req.nextUrl;
 
