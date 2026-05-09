@@ -42,6 +42,12 @@ export default function SignInPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       await ensureUserDocument(result.user);
+      const idToken = await result.user.getIdToken();
+      await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
       router.push(next);
     } catch (err: unknown) {
       const code = (err as { code?: string }).code ?? '';
@@ -61,6 +67,12 @@ export default function SignInPage() {
         toast.warning('이메일 인증이 필요해요. 메일함을 확인해주세요.');
         return;
       }
+      const idToken = await result.user.getIdToken();
+      await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
       router.push(next);
     } catch (err: unknown) {
       const code = (err as { code?: string }).code ?? '';

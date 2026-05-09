@@ -33,6 +33,12 @@ export default function SignUpPage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       await ensureUserDocument(result.user);
+      const idToken = await result.user.getIdToken();
+      await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
       toast.success('가입 완료! 15초 샘플 영상이 무료로 지급되었어요 🎉');
       router.push('/dashboard');
     } catch (err: unknown) {

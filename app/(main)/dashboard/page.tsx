@@ -32,18 +32,22 @@ export default async function DashboardPage() {
   const userData = userDoc.data();
   const balance: number = userData?.tokenBalance ?? 0;
 
-  const videosSnap = await adminDb!
-    .collection('videos')
-    .where('userId', '==', user.uid)
-    .orderBy('createdAt', 'desc')
-    .limit(20)
-    .get();
-
-  const videos = videosSnap.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate?.()?.toLocaleDateString('ko-KR') ?? '-',
-  }));
+  let videos: Record<string, unknown>[] = [];
+  try {
+    const videosSnap = await adminDb!
+      .collection('videos')
+      .where('userId', '==', user.uid)
+      .orderBy('createdAt', 'desc')
+      .limit(20)
+      .get();
+    videos = videosSnap.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate?.()?.toLocaleDateString('ko-KR') ?? '-',
+    }));
+  } catch {
+    // index not yet created — show empty list
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
